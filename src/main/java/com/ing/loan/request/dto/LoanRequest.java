@@ -1,22 +1,33 @@
 package com.ing.loan.request.dto;
 
+import com.ing.loan.request.services.utils.Amount;
 import jakarta.validation.constraints.*;
 import lombok.*;
+
+import java.math.BigDecimal;
 
 @Data
 @Builder
 @AllArgsConstructor
-@RequiredArgsConstructor
+@NoArgsConstructor
 public class LoanRequest {
 
-//    @Min(value = 500, message = "Amount must be greater than or equal to 500")
-//    @Max(value = 12000.50, message = "Amount must be less than or equal to 12000.50")
-    private double amount;
+    @NotNull(message = "Customer Id cannot be empty")
+    private Long customerId;
 
-    // Split customer full name into first name and last name
+    @NotNull(message = "Amount cannot be empty")
+    @DecimalMin(value = Amount.LOAN_MIN, message = "Amount must be greater than or equal to " + Amount.LOAN_MIN)
+    @DecimalMax(value = Amount.LOAN_MAX, message = "Amount must be less than or equal to " + Amount.LOAN_MAX)
+    private BigDecimal amount;
+
+    @NotBlank(message = "Customer Name cannot be empty")
     private String customerFullName;
 
-    @NotNull(message = "Customer Id cannot be null")
-    private Long customerId;
+    private String loanType;
+
+    @Min(value = 1, message = "Term must be at least 1 month")
+    private Integer termMonths;
+
+    private String status;
 
 }

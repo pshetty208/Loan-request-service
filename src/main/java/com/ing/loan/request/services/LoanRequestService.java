@@ -1,66 +1,27 @@
 package com.ing.loan.request.services;
+
 import com.ing.loan.request.dto.LoanRequest;
 import com.ing.loan.request.dto.LoanResponse;
 import com.ing.loan.request.exception.CustomerNotFoundException;
-import com.ing.loan.request.exception.IncorrectLoanAmountException;
-import com.ing.loan.request.models.Customer;
-import com.ing.loan.request.models.Loan;
-import com.ing.loan.request.persistence.CustomerRepository;
-import com.ing.loan.request.persistence.LoanRepository;
-import com.ing.loan.request.services.utils.Amount;
-import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Service;
+import com.ing.loan.request.exception.LoanNotFoundException;
 
+import java.math.BigDecimal;
 import java.util.List;
 
-@Service
-@RequiredArgsConstructor
-public class LoanRequestService implements LoanRequestServiceImpl{
+public interface LoanRequestService {
 
-    @Autowired
-    private LoanRepository loanRepository;
+    LoanResponse createLoan(LoanRequest loanRequest) throws CustomerNotFoundException;
 
-    @Autowired
-    private CustomerRepository customerRepository;
+    BigDecimal getLoanAmountByCustomerId(Long customerId);
 
-    @Override
-    @Transactional
-    public LoanResponse createLoan(LoanRequest loanRequest) throws IncorrectLoanAmountException, CustomerNotFoundException {
-        var amount = loanRequest.getAmount();
-        var min = Amount.LOAN_MIN.getValue();
-        var max = Amount.LOAN_MAX.getValue();
-        if (amount < min || amount > max) {
-            throw new IncorrectLoanAmountException("Incorrect Loan amount; Loan amount must be between "+min+" and "+max);
-        }
+    LoanResponse getLoanByLoanId(Long id) throws LoanNotFoundException;
 
-        // Check if customer exists
-        var customer = customerRepository.findByCustomerId(loanRequest.getCustomerId()).stream().findFirst();
-        if (customer.isEmpty()) {
-            throw new CustomerNotFoundException("Customer with ID " + loanRequest.getCustomerId() + " does not exist");
-        }
+    List<LoanResponse> getAllLoans();
 
-        var loan = loanRepository.save(Loan.builder()
-                .amount(loanRequest.getAmount())
-                .customerFullName(loanRequest.getCustomerFullName())
-                .customer(customer.get()).build());
+    List<LoanResponse> getLoansByCustomerId(Long customerId) throws CustomerNotFoundException;
 
-        return LoanResponse.builder().amount(loan.getAmount())
-                .customerFullName(loan.getCustomerFullName())
-                .customerId(loan.getCustomer().getCustomerId())
-                .message("Your loan request is successfully created")
-                .build();
-    }
+    LoanResponse updateLoan(Long id, LoanRequest request) throws LoanNotFoundException, CustomerNotFoundException;
 
-    @Override
-    @Cacheable(value = "totalLoanAmount", key = "#customerId")
-    public double getLoanAmountByCustomerId(Long customerId) {
-        List<Loan> loans = loanRepository.findByCustomerCustomerId(customerId);
-        return loans.stream()
-                .mapToDouble(Loan::getAmount)
-                .sum();
-    }
+    void deleteLoan(Long id) throws LoanNotFoundException;
 
 }

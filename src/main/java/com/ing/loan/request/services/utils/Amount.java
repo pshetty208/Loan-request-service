@@ -1,16 +1,10 @@
 package com.ing.loan.request.services.utils;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+public final class Amount {
 
-@Getter
-@AllArgsConstructor
-public enum Amount {
-    LOAN_MIN(500.0),
-    LOAN_MAX(12000.50);
+    public static final String LOAN_MIN = "500";
 
-    // Other numerical ENUMs related to amount Validation
+    public static final String LOAN_MAX = "12000.50";
 
-    private final double value;
-
+    private Amount() {}
 }

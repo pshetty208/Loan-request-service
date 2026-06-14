@@ -1,28 +1,39 @@
 package com.ing.loan.request.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
+
+import java.time.LocalDate;
 
 @Entity(name = "customer")
 @Data
 @Builder
 @AllArgsConstructor
-@RequiredArgsConstructor
+@NoArgsConstructor
 public class Customer {
 
     @Id
     @SequenceGenerator( name = "customer_id_generator", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE , generator = "customer_id_generator")
-    // Use UUID
-    private Long id; //Private to the bank
+    private Long id;
 
-    @Column(unique = true) // Make customerId column unique
-    // Use UUID
+    @Column(unique = true)
+    @NotNull(message = "Customer ID cannot be null")
     private Long customerId;
 
-    // Split customer full name into first name and last name
+    @NotBlank(message = "Customer name cannot be blank")
     private String customerFullName;
 
-    //Other fields - more internal information on the customer
+    @Email(message = "Invalid email format")
+    private String email;
+
+    private String phoneNumber;
+
+    private String address;
+
+    private LocalDate dateOfBirth;
 
 }

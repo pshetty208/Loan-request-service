@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
@@ -80,8 +81,8 @@ public class CustomerControllerIT {
 
     @Test
     void testUpdateCustomer() throws Exception {
-        CustomerRequest req = CustomerRequest.builder().customerId(111L).customerFullName("A Updated").build();
-        CustomerResponse updated = CustomerResponse.builder().customerId(111L).customerFullName("A Updated").build();
+        CustomerRequest req = CustomerRequest.builder().customerId(111L).customerFullName(eq("A Updated")).build();
+        CustomerResponse updated = CustomerResponse.builder().customerId(111L).customerFullName(eq("A Updated")).build();
         when(customerService.updateCustomer(1L, org.mockito.ArgumentMatchers.any(CustomerRequest.class))).thenReturn(updated);
 
         mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/loan-service/customers/1")

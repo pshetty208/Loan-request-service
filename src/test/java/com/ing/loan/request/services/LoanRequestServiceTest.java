@@ -90,19 +90,15 @@ public class LoanRequestServiceTest {
 
     @Test
     public void testGetLoanAmountByCustomerIdWithNoLoans() {
-        // Mocking loan repository to return an empty list of loans for the given customer ID
         when(loanRepository.sumAmountByCustomerId(123456789L)).thenReturn(BigDecimal.ZERO);
 
-        // Calling method under test
         BigDecimal totalLoanAmount = loanRequestService.getLoanAmountByCustomerId(123456789L);
 
-        // Assertions
         assertEquals(BigDecimal.ZERO, totalLoanAmount);
     }
 
     @Test
     public void testGetLoanAmountByCustomerIdWithSingleLoan() {
-        // Mocking loan repository to return a single loan for the given customer ID
         when(loanRepository.sumAmountByCustomerId(123456789L)).thenReturn(BigDecimal.valueOf(1000));
 
         BigDecimal totalLoanAmount = loanRequestService.getLoanAmountByCustomerId(123456789L);

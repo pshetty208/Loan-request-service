@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
@@ -81,7 +82,7 @@ class LoanControllerIT {
 
         when(loanRequestService.getAllLoans()).thenReturn(List.of(l1, l2));
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/loan-service/customers"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/loan-service/loans"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(objectMapper.writeValueAsString(List.of(l1, l2))));
     }
@@ -111,11 +112,11 @@ class LoanControllerIT {
                 .customerId(123346789L)
                 .build();
 
-        when(loanRequestService.getLoansByCustomerId(123348989L)).thenReturn(List.of(l1));
+        when(loanRequestService.getLoansByCustomerId(123346789L)).thenReturn(List.of(l1));
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/loan-service/customers/customerId/123346789"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/loan-service/loans/customers/123346789"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().json(objectMapper.writeValueAsString(l1)));
+                .andExpect(MockMvcResultMatchers.content().json(objectMapper.writeValueAsString(List.of(l1))));
     }
 
     @Test
@@ -145,7 +146,7 @@ class LoanControllerIT {
                 .customerFullName("Key Peel")
                 .customerId(123453489L)
                 .build();
-        when(loanRequestService.updateLoan(1L, ArgumentMatchers.any(LoanRequest.class))).thenReturn(l2);
+        when(loanRequestService.updateLoan(eq(1L), ArgumentMatchers.any(LoanRequest.class))).thenReturn(l2);
 
         mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/loan-service/loans/1")
                         .contentType(MediaType.APPLICATION_JSON)

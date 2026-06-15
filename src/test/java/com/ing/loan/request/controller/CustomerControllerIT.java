@@ -81,9 +81,9 @@ public class CustomerControllerIT {
 
     @Test
     void testUpdateCustomer() throws Exception {
-        CustomerRequest req = CustomerRequest.builder().customerId(111L).customerFullName(eq("A Updated")).build();
-        CustomerResponse updated = CustomerResponse.builder().customerId(111L).customerFullName(eq("A Updated")).build();
-        when(customerService.updateCustomer(1L, org.mockito.ArgumentMatchers.any(CustomerRequest.class))).thenReturn(updated);
+        CustomerRequest req = CustomerRequest.builder().customerId(111L).customerFullName("A Updated").build();
+        CustomerResponse updated = CustomerResponse.builder().customerId(111L).customerFullName("A Updated").build();
+        when(customerService.updateCustomer(eq(1L), org.mockito.ArgumentMatchers.any(CustomerRequest.class))).thenReturn(updated);
 
         mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/loan-service/customers/1")
                         .contentType(MediaType.APPLICATION_JSON)

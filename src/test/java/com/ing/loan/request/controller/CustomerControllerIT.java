@@ -50,7 +50,7 @@ public class CustomerControllerIT {
 
         when(customerService.createCustomer(org.mockito.ArgumentMatchers.any(CustomerRequest.class))).thenReturn(created);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/loan-service/customers")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/customer-service")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
@@ -64,7 +64,7 @@ public class CustomerControllerIT {
 
         when(customerService.getAllCustomers()).thenReturn(List.of(c1, c2));
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/loan-service/customers"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/customer-service"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(objectMapper.writeValueAsString(List.of(c1, c2))));
     }
@@ -74,7 +74,7 @@ public class CustomerControllerIT {
         CustomerResponse c = CustomerResponse.builder().customerId(111L).customerFullName("A").build();
         when(customerService.getCustomerById(111L)).thenReturn(c);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/loan-service/customers/customerId/111"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/customer-service/customerId/111"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(objectMapper.writeValueAsString(c)));
     }
@@ -85,7 +85,7 @@ public class CustomerControllerIT {
         CustomerResponse updated = CustomerResponse.builder().customerId(111L).customerFullName("A Updated").build();
         when(customerService.updateCustomer(eq(1L), org.mockito.ArgumentMatchers.any(CustomerRequest.class))).thenReturn(updated);
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/loan-service/customers/1")
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/customer-service/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(req)))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -96,7 +96,7 @@ public class CustomerControllerIT {
     void testDeleteCustomer() throws Exception {
         doNothing().when(customerService).deleteCustomer(1L);
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/loan-service/customers/1"))
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/customer-service/1"))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
     }
 }

@@ -8,7 +8,6 @@ import com.ing.loan.request.persistence.CustomerRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,8 +35,10 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Override
 	public CustomerResponse getCustomerById(Long id) throws CustomerNotFoundException {
-		Optional<Customer> opt = customerRepository.findById(id);
-		Customer customer = opt.orElseThrow(() -> new CustomerNotFoundException("Customer not found with id: " + id));
+		Customer customer = customerRepository.findByCustomerId(id);
+		if (customer == null) {
+			throw new CustomerNotFoundException("Customer with customerId: " + id + " not found.");
+		}
 		return toResponse(customer);
 	}
 
@@ -49,24 +50,27 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public CustomerResponse updateCustomer(Long id, CustomerRequest customerRequest) throws CustomerNotFoundException {
-		Customer existing = customerRepository.findById(id)
-				.orElseThrow(() -> new CustomerNotFoundException("Customer not found with id: " + id));
-		existing.setCustomerId(customerRequest.getCustomerId());
-		existing.setCustomerFullName(customerRequest.getCustomerFullName());
-		existing.setEmail(customerRequest.getEmail());
-		existing.setPhoneNumber(customerRequest.getPhoneNumber());
-		existing.setAddress(customerRequest.getAddress());
-		existing.setDateOfBirth(customerRequest.getDateOfBirth());
-		Customer saved = customerRepository.save(existing);
+	public CustomerResponse updateCustomer(Long customerId, CustomerRequest customerRequest) throws CustomerNotFoundException {
+		Customer customer = customerRepository.findByCustomerId(customerId);
+		if (customer == null) {
+			throw new CustomerNotFoundException("Customer with customerId: " + customerId + " not found.");
+		}
+		customer.setCustomerFullName(customerRequest.getCustomerFullName());
+		customer.setEmail(customerRequest.getEmail());
+		customer.setPhoneNumber(customerRequest.getPhoneNumber());
+		customer.setAddress(customerRequest.getAddress());
+		customer.setDateOfBirth(customerRequest.getDateOfBirth());
+		Customer saved = customerRepository.save(customer);
 		return toResponse(saved);
 	}
 
 	@Override
-	public void deleteCustomer(Long id) throws CustomerNotFoundException {
-		Customer existing = customerRepository.findById(id)
-				.orElseThrow(() -> new CustomerNotFoundException("Customer not found with id: " + id));
-		customerRepository.delete(existing);
+	public void deleteCustomer(Long customerId) throws CustomerNotFoundException {
+		Customer customer = customerRepository.findByCustomerId(customerId);
+		if (customer == null) {
+			throw new CustomerNotFoundException("Customer with customerId: " + customerId + " not found.");
+		}
+		customerRepository.delete(customer);
 	}
 
 	private CustomerResponse toResponse(Customer customer) {

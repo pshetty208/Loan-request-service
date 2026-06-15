@@ -15,9 +15,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.Collections;
-
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -39,7 +36,7 @@ public class LoanRequestServiceTest {
 
     @Test
     public void testCreateLoanWithValidInput() throws CustomerNotFoundException {
-        when(customerRepository.findByCustomerId(anyLong())).thenReturn(Collections.singletonList(Customer.builder()
+        when(customerRepository.findByCustomerId(anyLong())).thenReturn((Customer.builder()
                 .customerId(123456789L)
                 .customerFullName("John Doe")
                 .id(123456780L)
@@ -74,7 +71,7 @@ public class LoanRequestServiceTest {
 
     @Test
     public void testCreateLoanWithNonExistentCustomer() {
-        when(customerRepository.findByCustomerId(anyLong())).thenReturn(Collections.emptyList());
+        when(customerRepository.findByCustomerId(anyLong())).thenReturn(null);
 
         LoanRequest loanRequest = LoanRequest.builder()
                 .amount(BigDecimal.valueOf(1000))

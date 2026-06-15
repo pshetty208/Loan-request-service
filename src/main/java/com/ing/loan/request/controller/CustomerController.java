@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/loan-service/customers")
+@RequestMapping("/api/v1/customer-service")
 public class CustomerController {
 
     private final CustomerService customerService;
@@ -39,15 +39,15 @@ public class CustomerController {
         return ResponseEntity.ok(customers);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<CustomerResponse> updateCustomer(@PathVariable Long id, @Valid @RequestBody CustomerRequest customerRequest) throws CustomerNotFoundException {
-        CustomerResponse customer = customerService.updateCustomer(id, customerRequest);
+    @PutMapping("/{customerId}")
+    public ResponseEntity<CustomerResponse> updateCustomer(@PathVariable Long customerId, @Valid @RequestBody CustomerRequest customerRequest) throws CustomerNotFoundException {
+        CustomerResponse customer = customerService.updateCustomer(customerId, customerRequest);
         return ResponseEntity.ok(customer);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCustomer(@PathVariable Long id) throws CustomerNotFoundException {
-        customerService.deleteCustomer(id);
+    @DeleteMapping("/{customerId}")
+    public ResponseEntity<Void> deleteCustomer(@PathVariable Long customerId) throws CustomerNotFoundException {
+        customerService.deleteCustomer(customerId);
         return ResponseEntity.noContent().build();
     }
 

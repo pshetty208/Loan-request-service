@@ -112,11 +112,18 @@ class LoanControllerIT {
                 .customerId(123346789L)
                 .build();
 
-        when(loanRequestService.getLoansByCustomerId(123346789L)).thenReturn(List.of(l1));
+        LoanResponse l2 = LoanResponse.builder()
+                .id(123348989L)
+                .amount(BigDecimal.valueOf(10000))
+                .customerFullName("John Doe")
+                .customerId(123346789L)
+                .build();
+
+        when(loanRequestService.getLoansByCustomerId(123346789L)).thenReturn(List.of(l1,l2));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/loan-service/loans/customers/123346789"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().json(objectMapper.writeValueAsString(List.of(l1))));
+                .andExpect(MockMvcResultMatchers.content().json(objectMapper.writeValueAsString(List.of(l1,l2))));
     }
 
     @Test

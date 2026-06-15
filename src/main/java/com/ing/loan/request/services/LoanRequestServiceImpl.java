@@ -33,11 +33,10 @@ public class LoanRequestServiceImpl implements LoanRequestService {
     @Transactional
     public LoanResponse createLoan(LoanRequest loanRequest) throws CustomerNotFoundException {
 
-        List<Customer> customers = customerRepository.findByCustomerId(loanRequest.getCustomerId());
-        if (customers == null || customers.isEmpty()) {
+        Customer customer = customerRepository.findByCustomerId(loanRequest.getCustomerId());
+        if (customer == null) {
             throw new CustomerNotFoundException("Customer not found with customerId: " + loanRequest.getCustomerId());
         }
-        Customer customer = customers.get(0);
 
         Loan loan = Loan.builder()
                 .amount(loanRequest.getAmount())
@@ -72,11 +71,11 @@ public class LoanRequestServiceImpl implements LoanRequestService {
 
     @Override
     public List<LoanResponse> getLoansByCustomerId(Long customerId) throws CustomerNotFoundException {
-        List<Customer> customers = customerRepository.findByCustomerId(customerId);
-        if (customers == null || customers.isEmpty()) {
+        Customer customer = customerRepository.findByCustomerId(customerId);
+        if (customer == null) {
             throw new CustomerNotFoundException("Customer with customerId: " + customerId + " not found.");
         }
-        return loanRepository.findCustomerByCustomerId(customerId).stream().map(this::toResponse).collect(Collectors.toList());
+        return loanRepository.findByCustomerCustomerId(customerId).stream().map(this::toResponse).collect(Collectors.toList());
     }
 
     @Override
@@ -84,8 +83,8 @@ public class LoanRequestServiceImpl implements LoanRequestService {
     public LoanResponse updateLoan(Long id, LoanRequest request) throws LoanNotFoundException, CustomerNotFoundException {
         Loan existing = loanRepository.findById(id).orElseThrow(() -> new LoanNotFoundException("Loan not found with id: " + id));
 
-        List<Customer> customers = customerRepository.findByCustomerId(request.getCustomerId());
-        if (customers == null || customers.isEmpty()) {
+        Customer customer = customerRepository.findByCustomerId(request.getCustomerId());
+        if (customer == null) {
             throw new CustomerNotFoundException("Customer not found with customerId: " + request.getCustomerId());
         }
 

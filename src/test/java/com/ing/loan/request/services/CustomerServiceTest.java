@@ -13,8 +13,6 @@ import org.mockito.MockitoAnnotations;
 
 import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -65,11 +63,11 @@ public class CustomerServiceTest {
 
     @Test
     public void testGetCustomerByIdExists() throws CustomerNotFoundException {
-        when(customerRepository.findById(1L)).thenReturn(Optional.of(Customer.builder()
+        when(customerRepository.findByCustomerId(1L)).thenReturn(Customer.builder()
                 .id(1L)
                 .customerId(123L)
                 .customerFullName("Jane Doe")
-                .build()));
+                .build());
 
         CustomerResponse resp = customerService.getCustomerById(1L);
 
@@ -77,16 +75,16 @@ public class CustomerServiceTest {
         assertEquals(123L, resp.getCustomerId());
         assertEquals("Jane Doe", resp.getCustomerFullName());
 
-        verify(customerRepository, times(1)).findById(1L);
+        verify(customerRepository, times(1)).findByCustomerId(1L);
     }
 
     @Test
     public void testGetCustomerByIdNotFound() {
-        when(customerRepository.findById(2L)).thenReturn(Optional.empty());
+        when(customerRepository.findByCustomerId(2L)).thenReturn(null);
 
         assertThrows(CustomerNotFoundException.class, () -> customerService.getCustomerById(2L));
 
-        verify(customerRepository, times(1)).findById(2L);
+        verify(customerRepository, times(1)).findByCustomerId(2L);
     }
 
     @Test
@@ -114,7 +112,7 @@ public class CustomerServiceTest {
                 .email("old@example.com")
                 .build();
 
-        when(customerRepository.findById(5L)).thenReturn(Optional.of(existing));
+        when(customerRepository.findByCustomerId(5L)).thenReturn(existing);
         when(customerRepository.save(any(Customer.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         CustomerRequest update = CustomerRequest.builder()
@@ -129,28 +127,28 @@ public class CustomerServiceTest {
         assertEquals("New Name", resp.getCustomerFullName());
         assertEquals("new@example.com", resp.getEmail());
 
-        verify(customerRepository, times(1)).findById(5L);
+        verify(customerRepository, times(1)).findByCustomerId(5L);
         verify(customerRepository, times(1)).save(any(Customer.class));
     }
 
     @Test
     public void testDeleteCustomer() throws CustomerNotFoundException {
         Customer existing = Customer.builder().id(9L).customerId(999L).customerFullName("ToDelete").build();
-        when(customerRepository.findById(9L)).thenReturn(Optional.of(existing));
+        when(customerRepository.findByCustomerId(9L)).thenReturn(existing);
 
         customerService.deleteCustomer(9L);
 
-        verify(customerRepository, times(1)).findById(9L);
+        verify(customerRepository, times(1)).findByCustomerId(9L);
         verify(customerRepository, times(1)).delete(existing);
     }
 
     @Test
     public void testDeleteCustomerNotFound() {
-        when(customerRepository.findById(10L)).thenReturn(Optional.empty());
+        when(customerRepository.findByCustomerId(10L)).thenReturn(null);
 
         assertThrows(CustomerNotFoundException.class, () -> customerService.deleteCustomer(10L));
 
-        verify(customerRepository, times(1)).findById(10L);
+        verify(customerRepository, times(1)).findByCustomerId(10L);
         verify(customerRepository, times(0)).delete(any(Customer.class));
     }
 

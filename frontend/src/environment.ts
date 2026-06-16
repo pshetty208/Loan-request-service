@@ -1,5 +1,7 @@
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:8081/api/v1/loan-service'
+  loanServiceUrl: 'http://localhost:8081/api/v1/loan-service',
+  customerServiceUrl: 'http://localhost:8081/api/v1/customer-service'
+
 };
 

@@ -72,7 +72,7 @@ import { LoanResponse } from '../../../models/api.models';
             </tr>
             <tr *ngIf="!loading && loans.length === 0">
               <td colspan="8" class="text-center text-muted">
-                No loans found. <a routerLink="/loans/create">Create one</a>
+                No loans found.
               </td>
             </tr>
           </tbody>
